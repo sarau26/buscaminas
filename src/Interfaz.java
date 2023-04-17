@@ -5,12 +5,9 @@ import model.NodoDoble;
 import model.Tripleta;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 
@@ -27,18 +24,21 @@ public class Interfaz extends javax.swing.JFrame {
     int abiertos = 0;
     int contBanderas = 0;
     int marcas = 0;
-    long TInicio, TFin, tiempo;
+    long tiempoInicio;
+    long tiempoFin;
+    long tiempo;
 
     JButton[][] botones;
 
     MatrizEnForma1 matrizEnForma1;
-    
+    String titulo = "Buscaminas";
+    String msgValorNumerico = "Debe ser un valor numerico";
 
 
     public Interfaz() {
 
-        mensaje("Bienvenido al buscaminas \n", "Buscaminas", 1);
-        mensaje("Desarrollado por: \n Sara Uribe Zapata \n Victor Manuel Osorio Garcia", "Buscaminas", 1);
+        mensaje("Bienvenido al buscaminas \n", titulo, 1);
+        mensaje("Desarrollado por: \n Sara Uribe Zapata \n Victor Manuel Osorio Garcia", titulo, 1);
         Menu();
     }
 
@@ -106,7 +106,7 @@ public class Interfaz extends javax.swing.JFrame {
 
                         //El limite de filas en pantalla es 22
                         if (fil > 22) {
-                            mensaje("El numero de filas maximas es de 22", "Buscaminas", 1);
+                            mensaje("El numero de filas maximas es de 22", titulo, 1);
                         }
 
                         String filas = "Ingrese numero de filas";
@@ -115,10 +115,10 @@ public class Interfaz extends javax.swing.JFrame {
                             fil = Integer.parseInt(JOptionPane.showInputDialog(filas));
                             numFilas = fil;
                             if (fil < 0) {
-                                mensaje("El numero de filas no puede ser negativo", "Buscaminas", 1);
+                                mensaje("El numero de filas no puede ser negativo", titulo, 1);
                             }
                         } catch (NumberFormatException e) {
-                            mensaje("Debe ser un valor numerico", "Buscaminas", 1);
+                            mensaje(msgValorNumerico, titulo, 1);
                         }
                     } while (fil > 22 || fil < 0);
 
@@ -128,7 +128,7 @@ public class Interfaz extends javax.swing.JFrame {
 
                         //El limite de columnas en pantalla es 44
                         if (col > 44) {
-                            mensaje("El numero de columnas maximas es de 44", "Buscaminas", 1);
+                            mensaje("El numero de columnas maximas es de 44", titulo, 1);
                         }
 
                         String columnas = "Ingrese numero de columnas";
@@ -137,10 +137,10 @@ public class Interfaz extends javax.swing.JFrame {
                             col = Integer.parseInt(JOptionPane.showInputDialog(columnas));
                             numColumnas = col;
                             if (col < 0) {
-                                mensaje("El numero de columnas no puede ser negativo", "Buscaminas", 1);
+                                mensaje("El numero de columnas no puede ser negativo", titulo, 1);
                             }
                         } catch (NumberFormatException e) {
-                            mensaje("Debe ser un valor numerico", "Buscaminas", 1);
+                            mensaje(msgValorNumerico, titulo, 1);
                         }
                     } while (col > 44 || col < 0);
 
@@ -154,14 +154,14 @@ public class Interfaz extends javax.swing.JFrame {
                             min = Integer.parseInt(JOptionPane.showInputDialog(minas));
                             numMinas = min;
                             if (min < 0) {
-                                mensaje("El numero de minas no puede ser negativo", "Buscaminas", 1);
+                                mensaje("El numero de minas no puede ser negativo", titulo, 1);
                             }
                         } catch (NumberFormatException e) {
-                            mensaje("Debe ser un valor numerico", "Buscaminas", 1);
+                            mensaje(msgValorNumerico, titulo, 1);
                         }
 
                         if (min >= (numFilas * numColumnas)) {
-                            mensaje("El numero de minas es mayor a lo esperado ", "Buscaminas", 1);
+                            mensaje("El numero de minas es mayor a lo esperado ", titulo, 1);
                         }
 
                     } while (min < 0 || min >= (numFilas * numColumnas));
@@ -174,13 +174,13 @@ public class Interfaz extends javax.swing.JFrame {
 
                 case "5":
 
-                    mensaje("Chao \n Practica pa 5 :v", "Buscaminas", 1);
+                    mensaje("Chao \n Practica pa 5 :v", titulo, 1);
                     System.exit(0);
                     break;
 
                 default:
 
-                    mensaje("Opción incorrecta", "Buscaminas", 1);
+                    mensaje("Opción incorrecta", titulo, 1);
                     break;
             }
 
@@ -211,7 +211,7 @@ public class Interfaz extends javax.swing.JFrame {
                     botones[i][j].setBounds(x,
                             y, ancho, alto);
 
-                } else if (i == 0 && j != 0) {
+                } else if (i == 0) {
 
                     botones[i][j].setBounds(botones[i][j - 1].getX() + botones[i][j - 1].getWidth(),
                             y, ancho, alto);
@@ -230,18 +230,14 @@ public class Interfaz extends javax.swing.JFrame {
                     int auxFila = aux1;
                     int auxColumna = aux2;
 
+                    @Override
                     public void mousePressed(java.awt.event.MouseEvent evt) {
                         formMousePressed(evt, auxFila, auxColumna);
                     }
                 });
 
                 //Agrega la funcion darle click izquierdo a un boton
-                botones[i][j].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        btnClick(e);
-                    }
-                });
+                botones[i][j].addActionListener(this::btnClick);
 
                 //Agrega los botones al pane
                 getContentPane().add(botones[i][j]);
@@ -255,7 +251,7 @@ public class Interfaz extends javax.swing.JFrame {
                         + botones[numFilas - 1][numColumnas - 1].getHeight() + 70
         );
         lblContador.setText(""+marcas);
-        TInicio = System.currentTimeMillis(); 
+        tiempoInicio = System.currentTimeMillis();
     }
 
     private void btnClick(ActionEvent e) {
@@ -329,8 +325,8 @@ public class Interfaz extends javax.swing.JFrame {
     //Mensaje de volver a jugar o no, si tipo es 0 es porque perdio si es 1 gano
     private void repetir(int tipo) {
 
-        TFin = System.currentTimeMillis();
-        tiempo = TFin - TInicio;
+        tiempoFin = System.currentTimeMillis();
+        tiempo = tiempoFin - tiempoInicio;
         tiempo/=1000;
         int horas = 0;
         int minutos = 0;
@@ -363,13 +359,13 @@ public class Interfaz extends javax.swing.JFrame {
 
                 case "n":
 
-                    mensaje("Gracias por jugar con nosotros \n Practica pa 5 :v", "Buscaminas", 1);
+                    mensaje("Gracias por jugar con nosotros \n Practica pa 5 :v", titulo, 1);
                     System.exit(0);
                     break;
 
                 default:
 
-                    mensaje("opcion incorrecta", "buscaminas", 1);
+                    mensaje("opcion incorrecta", titulo, 1);
                     break;
             }
         } while (!rpta.equals("s"));
@@ -603,6 +599,6 @@ public class Interfaz extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    public javax.swing.JLabel lblContador;
+    private javax.swing.JLabel lblContador;
     // End of variables declaration//GEN-END:variables
 }
